@@ -1,0 +1,23 @@
+# Learn more about services, parameters and containers at
+# http://symfony.com/doc/current/service_container.html
+parameters:
+#    parameter_name: value
+
+services:
+#    service_name:
+#        class: AppBundle\Directory\ClassName
+#        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
+    top_or_flop.twig.number_extension:
+        class: TopOrFlopBundle\Twig\NumberExtension
+        tags:
+            - { name: twig.extension }
+    top_or_flop.media_manager:
+            class:     TopOrFlopBundle\Service\MediaManager
+            arguments:
+#                - "@doctrine.orm.entity_manager"
+                - "@=service('doctrine').getManager()"
+                - "@security.token_storage"
+                - "@security.authorization_checker"
+            #on peut aussier passer les informations par un call, on va privilegier cette methode quand on fait passer un service qui est optionnel
+#            calls:
+#              - [ setLogger, [ "@logger"] ] # et la nous dans notre classe, on doit avoir une fonction setLogger qui prend en parametre l'interface du service qu'on envoit (ou le service)

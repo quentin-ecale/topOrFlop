@@ -1,0 +1,59 @@
+# To get started with security, check out the documentation:
+# http://symfony.com/doc/current/security.html
+security:
+#Ici on definit les strats d'encodage par user / url / type d'action
+    encoders:
+            FOS\UserBundle\Model\UserInterface: bcrypt
+            Symfony\Component\Security\Core\User\User: plaintext
+
+    # http://symfony.com/doc/current/security.html#b-configuring-how-users-are-loaded
+    # ici on peut stocker les users en dur avec le in meroru par exemple
+    providers:
+            fos_userbundle:
+                id: fos_user.user_provider.username
+            backend_in_memory:
+                memory:
+                    users:
+                        admin: { password: adminpass, roles: [ 'ROLE_ADMIN' ] }
+
+# si on utilise des pattern d'url, l'ordre est pris en compte donc par exemple si / est en 1er le reste sera ignoré
+    firewalls:
+            dev:
+                pattern: ^/(_(profiler|wdt)|css|images|js)/
+                security: false
+
+            backend:
+                pattern:   ^/admin
+                http_basic:
+                    provider: backend_in_memory
+
+            main:
+                pattern:    ^/
+                form_login:
+                    provider: fos_userbundle
+                    csrf_token_generator: security.csrf.token_manager
+                logout: true
+                anonymous: true
+
+            # activate different ways to authenticate
+
+            # http_basic: ~
+            # http://symfony.com/doc/current/security.html#a-configuring-how-your-users-will-authenticate
+
+            # form_login: ~
+            # http://symfony.com/doc/current/cookbook/security/form_login_setup.html
+
+    access_control:
+            - { path: ^/admin, roles: [ROLE_ADMIN] }
+            - { path: ^/login, roles: [IS_AUTHENTICATED_ANONYMOUSLY] }
+            - { path: ^/register, roles: [IS_AUTHENTICATED_ANONYMOUSLY] }
+            - { path: ^/vote, roles: [ROLE_USER] }
+            - { path: ^/, roles: [IS_AUTHENTICATED_ANONYMOUSLY] }
+
+    # definition des roles et on peut les ajouter ( exemple : superadmin = admin + autre droits)
+    #        role_hierarchy:
+    role_hierarchy:
+            ROLE_ADMIN:       ROLE_USER
+            ROLE_SUPER_ADMIN: [ROLE_USER, ROLE_ADMIN]
+
+# On peut gérer les urls de redirection

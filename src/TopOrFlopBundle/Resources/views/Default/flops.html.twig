@@ -1,0 +1,11 @@
+{% extends "TopOrFlopBundle::layout.html.twig" %}
+
+{% block title 'Top or Flop - flops' %}
+
+{% block content %}
+    <h2>Classement des Flops</h2>
+    {% for index, top in flops %}
+        <a href="{{ path('show_media', {'id': top.id}) }}">{{ top.title }}</a>
+        - {{ top | format_score }}/10 <i>({{ top.votes | length }} votes)</i><br />
+    {% endfor %}
+{% endblock %}
